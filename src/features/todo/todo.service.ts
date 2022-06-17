@@ -3,6 +3,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { Todo } from '../../entities/todo.entity';
+import { UpdateTodoDto } from './dto/update-todo.dto';
 
 @Injectable()
 export class TodoService {
@@ -24,5 +25,21 @@ export class TodoService {
         return this.todoRepository.find({
             where: { owner: { id: ownerId } },
         });
+    }
+
+    findOne(id: string, options?: { withOwner: boolean }) {
+        if (options?.withOwner) {
+            return this.todoRepository.findOne({ where: { id }, relations: ['owner'] });
+        } else {
+            return this.todoRepository.findOne({ where: { id } });
+        }
+    }
+
+    async update(id: string, payload: UpdateTodoDto) {
+        const todo = await this.todoRepository.findOne({ where: { id } });
+        Object.entries(payload).forEach(([key, value]) => {
+            todo[key] = value;
+        });
+        return this.todoRepository.save(todo);
     }
 }

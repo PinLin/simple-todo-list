@@ -61,4 +61,34 @@ describe('TodoService', () => {
     const todos = await service.findAllByOwner(ownerId);
     expect(todos).toHaveLength(1);
   });
+
+  it('should return the specific todo', async () => {
+    const todoId = '642d6dc0-6300-4077-8d01-15c9c79ede6b';
+
+    const todo = await service.findOne('642d6dc0-6300-4077-8d01-15c9c79ede6b');
+    expect(todo.id).toBe(todoId);
+    expect(todo.owner).toBeUndefined();
+  });
+
+  it('should return the specific todo including its owner', async () => {
+    const todoId = '642d6dc0-6300-4077-8d01-15c9c79ede6b';
+
+    const todo = await service.findOne('642d6dc0-6300-4077-8d01-15c9c79ede6b', { withOwner: true });
+    expect(todo.id).toBe(todoId);
+    expect(todo.owner).toBeDefined();
+  });
+
+  it('should update the specific todo', async () => {
+    const todoId = '642d6dc0-6300-4077-8d01-15c9c79ede6b';
+    const dto = {
+      title: 'wow',
+      description: 'wow',
+      completed: true,
+    };
+
+    const todo = await service.update(todoId, dto);
+    expect(todo.title).toBe(dto.title);
+    expect(todo.description).toBe(dto.description);
+    expect(todo.completed).toBe(dto.completed);
+  });
 });

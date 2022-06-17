@@ -1,5 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from '../user/user.service';
+import { NoPermissionToEditTodoException } from './exceptions/no-permission-to-edit-todo.exception';
+import { TodoNotExistedException } from './exceptions/todo-not-existed.exception';
 import { TodoController } from './todo.controller';
 import { TodoService } from './todo.service';
 
@@ -13,16 +15,40 @@ describe('TodoController', () => {
       completed: false,
       id: '642d6dc0-6300-4077-8d01-15c9c79ede6b',
     };
+    const mockTodoWithOwner = {
+      ...mockTodo,
+      owner: { id: 1 },
+    };
     const mockTodoService = {
       create: jest.fn((dto, ownerId) => ({ ...dto, owner: { id: ownerId } })),
       findAllByOwner: jest.fn(_ => [mockTodo]),
+      findOne: jest.fn((id, { withOwner }) => {
+        if (id === '642d6dc0-6300-4077-8d01-15c9c79ede6b') {
+          return withOwner ? mockTodoWithOwner : mockTodo;
+        } else {
+          return null;
+        }
+      }),
+      update: jest.fn((id, dto) => ({ ...dto, id })),
     };
-    const mockUser = {
+    const mockUser1 = {
       id: 1,
       username: 'someone',
     };
+    const mockUser2 = {
+      id: 2,
+      username: 'sometwo',
+    };
     const mockUserService = {
-      findOne: jest.fn(username => (username == 'someone@example.com' ? mockUser : null)),
+      findOne: jest.fn(username => {
+        if (username == 'someone') {
+          return mockUser1;
+        }
+        if (username == 'sometwo') {
+          return mockUser2;
+        }
+        return null;
+      }),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -55,5 +81,32 @@ describe('TodoController', () => {
 
     const todos = await controller.findAllTodosByOwner(req);
     expect(todos).toHaveLength(1);
+  });
+
+  it('should update the specific todo', async () => {
+    const todoId = '642d6dc0-6300-4077-8d01-15c9c79ede6b';
+    const dto = { title: 'wow', description: 'wow', completed: true };
+    const req = { user: { username: 'someone' } };
+
+    const todo = await controller.updateTodo(todoId, dto, req);
+    expect(todo.title).toBe(dto.title);
+    expect(todo.description).toBe(dto.description);
+    expect(todo.completed).toBe(dto.completed);
+  });
+
+  it('should throw an error when updating a todo that belongs to others', async () => {
+    const todoId = '642d6dc0-6300-4077-8d01-15c9c79ede6b';
+    const dto = { title: 'wow', description: 'wow', completed: true };
+    const req = { user: { username: 'sometwo' } };
+
+    expect(controller.updateTodo(todoId, dto, req)).rejects.toThrow(NoPermissionToEditTodoException);
+  });
+
+  it('should throw an error when updating a non-existed todo', async () => {
+    const todoId = 'not-existed';
+    const dto = { title: 'wow', description: 'wow', completed: true };
+    const req = { user: { username: 'sometwo' } };
+
+    expect(controller.updateTodo(todoId, dto, req)).rejects.toThrow(TodoNotExistedException);
   });
 });

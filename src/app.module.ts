@@ -1,9 +1,10 @@
-import { Module } from '@nestjs/common';
+import { Module, ValidationPipe } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { Argon2Module } from './utils/argon2/argon2.module';
+import { UserModule } from './features/user/user.module';
 
 @Module({
   imports: [
@@ -25,8 +26,15 @@ import { Argon2Module } from './utils/argon2/argon2.module';
       }),
     }),
     Argon2Module,
+    UserModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: 'APP_PIPE',
+      useValue: new ValidationPipe({ whitelist: true }),
+    },
+  ],
 })
 export class AppModule { }

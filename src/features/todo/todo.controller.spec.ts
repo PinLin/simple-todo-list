@@ -7,8 +7,15 @@ describe('TodoController', () => {
   let controller: TodoController;
 
   beforeEach(async () => {
+    const mockTodo = {
+      title: 'test',
+      description: 'test',
+      completed: false,
+      id: '642d6dc0-6300-4077-8d01-15c9c79ede6b',
+    };
     const mockTodoService = {
       create: jest.fn((dto, ownerId) => ({ ...dto, owner: { id: ownerId } })),
+      findAllByOwner: jest.fn(_ => [mockTodo]),
     };
     const mockUser = {
       id: 1,
@@ -40,5 +47,13 @@ describe('TodoController', () => {
     const todo = await controller.createTodo(dto, req);
     expect(todo.title).toBe(dto.title);
     expect(todo.description).toBe(dto.description);
+  });
+
+
+  it('should show all todos of a specific user', async () => {
+    const req = { user: { username: 'someone' } };
+
+    const todos = await controller.findAllTodosByOwner(req);
+    expect(todos).toHaveLength(1);
   });
 });

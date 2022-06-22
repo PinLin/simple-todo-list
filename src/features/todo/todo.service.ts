@@ -19,4 +19,10 @@ export class TodoService {
         });
         return this.todoRepository.save(todo);
     }
+
+    findAllByOwner(ownerId: number) {
+        return this.todoRepository.find({
+            where: { owner: { id: ownerId } },
+        });
+    }
 }

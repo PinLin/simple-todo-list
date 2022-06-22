@@ -54,4 +54,11 @@ describe('TodoService', () => {
     expect(todo.completed).toBeFalsy();
     expect(todo.owner.id).toBe(ownerId);
   });
+
+  it('should show all todos by owner', async () => {
+    const ownerId = 1;
+
+    const todos = await service.findAllByOwner(ownerId);
+    expect(todos).toHaveLength(1);
+  });
 });

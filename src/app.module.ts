@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { Argon2Module } from './utils/argon2/argon2.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { AppService } from './app.service';
         synchronize: true,
       }),
     }),
+    Argon2Module,
   ],
   controllers: [AppController],
   providers: [AppService],

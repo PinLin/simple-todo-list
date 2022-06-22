@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { UserService } from '../user/user.service';
@@ -51,5 +51,23 @@ export class TodoController {
         const updatedTodo = await this.todoService.update(id, payload);
         delete updatedTodo.owner;
         return updatedTodo;
+    }
+
+    @Delete(':id')
+    @UseGuards(AuthGuard('jwt'))
+    @HttpCode(HttpStatus.NO_CONTENT)
+    async deleteTodo(@Param('id') id: string, @Req() req: Request) {
+        const todo = await this.todoService.findOne(id, { withOwner: true });
+        if (!todo) {
+            throw new TodoNotExistedException();
+        }
+
+        const { username } = req.user;
+        const user = await this.userService.findOne(username);
+        if (todo?.owner.id !== user.id) {
+            throw new NoPermissionToEditTodoException();
+        }
+
+        await this.todoService.delete(id);
     }
 }

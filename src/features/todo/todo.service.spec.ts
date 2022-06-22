@@ -91,4 +91,11 @@ describe('TodoService', () => {
     expect(todo.description).toBe(dto.description);
     expect(todo.completed).toBe(dto.completed);
   });
+
+  it('should delete the specific todo', async () => {
+    const todoId = '642d6dc0-6300-4077-8d01-15c9c79ede6b';
+
+    const todo = await service.delete(todoId);
+    expect(todo.id).toBeUndefined();
+  });
 });

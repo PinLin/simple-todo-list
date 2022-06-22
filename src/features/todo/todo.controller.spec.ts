@@ -30,6 +30,7 @@ describe('TodoController', () => {
         }
       }),
       update: jest.fn((id, dto) => ({ ...dto, id })),
+      delete: jest.fn(_ => { }),
     };
     const mockUser1 = {
       id: 1,
@@ -108,5 +109,26 @@ describe('TodoController', () => {
     const req = { user: { username: 'sometwo' } };
 
     expect(controller.updateTodo(todoId, dto, req)).rejects.toThrow(TodoNotExistedException);
+  });
+
+  it('should delete the specific todo', async () => {
+    const todoId = '642d6dc0-6300-4077-8d01-15c9c79ede6b';
+    const req = { user: { username: 'someone' } };
+
+    expect(controller.deleteTodo(todoId, req)).resolves.not.toThrow();
+  });
+
+  it('should throw an error when deleting a todo that belongs to others', async () => {
+    const todoId = '642d6dc0-6300-4077-8d01-15c9c79ede6b';
+    const req = { user: { username: 'sometwo' } };
+
+    expect(controller.deleteTodo(todoId, req)).rejects.toThrow(NoPermissionToEditTodoException);
+  });
+
+  it('should throw an error when deleting a non-existed todo', async () => {
+    const todoId = 'not-existed';
+    const req = { user: { username: 'sometwo' } };
+
+    expect(controller.deleteTodo(todoId, req)).rejects.toThrow(TodoNotExistedException);
   });
 });

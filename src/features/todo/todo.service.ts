@@ -42,4 +42,9 @@ export class TodoService {
         });
         return this.todoRepository.save(todo);
     }
+
+    async delete(id: string) {
+        const todo = await this.todoRepository.findOne({ where: { id } });
+        return this.todoRepository.remove(todo);
+    }
 }

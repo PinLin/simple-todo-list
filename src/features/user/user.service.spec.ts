@@ -1,7 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
-import { User } from '../../entities/user.entity';
 import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
+import { User } from '../../entities/user.entity';
+import { Todo } from '../../entities/todo.entity';
 import { Argon2Service } from '../../utils/argon2/argon2.service';
 import { Repository } from 'typeorm';
 
@@ -21,7 +22,7 @@ describe('UserService', () => {
           autoLoadEntities: true,
           synchronize: true,
         }),
-        TypeOrmModule.forFeature([User]),
+        TypeOrmModule.forFeature([User, Todo]),
       ],
       providers: [
         UserService,

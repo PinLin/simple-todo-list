@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { Argon2Module } from './utils/argon2/argon2.module';
 import { UserModule } from './features/user/user.module';
+import { AuthModule } from './features/auth/auth.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { UserModule } from './features/user/user.module';
     }),
     Argon2Module,
     UserModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [

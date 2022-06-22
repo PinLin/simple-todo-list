@@ -24,4 +24,8 @@ export class UserService {
         });
         return this.userRepository.save(newUser);
     }
+
+    findOne(username: string) {
+        return this.userRepository.findOneBy({ username });
+    }
 }

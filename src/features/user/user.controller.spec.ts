@@ -14,6 +14,7 @@ describe('UserController', () => {
     }
     const mockUserService = {
       create: jest.fn(dto => dto.username != 'someone' ? { ...dto, id: 2 } : null),
+      findOne: jest.fn(username => username == 'someone' ? mockUser : null),
     };
 
     const module: TestingModule = await Test.createTestingModule({

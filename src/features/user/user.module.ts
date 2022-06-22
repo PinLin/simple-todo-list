@@ -11,6 +11,7 @@ import { Argon2Module } from '../../utils/argon2/argon2.module';
     Argon2Module,
   ],
   providers: [UserService],
-  controllers: [UserController]
+  controllers: [UserController],
+  exports: [UserService],
 })
 export class UserModule {}

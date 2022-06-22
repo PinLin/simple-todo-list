@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { UserExistedException } from './exceptions/user-existed.exception';
+import { UserNotExistedException } from './exceptions/user-not-existed.exception';
 
 describe('UserController', () => {
   let controller: UserController;
@@ -42,5 +43,18 @@ describe('UserController', () => {
     const dto = { username: 'someone', password: 'dontcare' };
 
     expect(controller.createUser(dto)).rejects.toThrow(UserExistedException);
+  });
+
+  it('should return a user object', async () => {
+    const req = { user: { username: 'someone' } };
+
+    const user = await controller.getUser(req as any);
+    expect(user.username).toBe(req.user.username);
+  });
+
+  it('should throw an error when getting a non-existed user', async () => {
+    const req = { user: { username: 'not_existed' } };
+
+    expect(controller.getUser(req as any)).rejects.toThrow(UserNotExistedException);
   });
 });

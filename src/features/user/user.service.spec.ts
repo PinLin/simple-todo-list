@@ -8,10 +8,12 @@ import { Repository } from 'typeorm';
 
 describe('UserService', () => {
   let service: UserService;
+  let userRepository: Repository<User>;
 
   beforeEach(async () => {
     const mockArgon2Service = {
-      hash: jest.fn(_ => 'hashed'),
+      hash: jest.fn(password => 'hashed_' + password),
+      verify: jest.fn((hash, password) => hash == 'hashed_' + password),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -32,10 +34,10 @@ describe('UserService', () => {
 
     service = module.get<UserService>(UserService);
 
-    const userRepository = module.get<Repository<User>>(getRepositoryToken(User));
+    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
     await userRepository.save(userRepository.create({
       username: 'someone',
-      password: 'hashed',
+      password: 'hashed_correct',
     }));
   });
 
@@ -44,11 +46,11 @@ describe('UserService', () => {
   });
 
   it('should create a user', async () => {
-    const dto = { username: 'newone', password: 'dontcare' };
+    const dto = { username: 'newone', password: 'correct' };
 
     const user = await service.create(dto);
     expect(user.username).toBe(dto.username);
-    expect(user.password).toBe('hashed');
+    expect(user.password).toBe('hashed_correct');
   });
 
   it('should return null when creating a existed user', async () => {
@@ -63,7 +65,7 @@ describe('UserService', () => {
 
     const user = await service.findOne(username);
     expect(user.username).toBe(username);
-    expect(user.password).toBe('hashed');
+    expect(user.password).toBe('hashed_correct');
   });
 
   it('should return null when finding a existed user', async () => {
@@ -72,4 +74,15 @@ describe('UserService', () => {
     const user = await service.findOne(username);
     expect(user).toBeNull();
   });
+
+  it('should change the password of the specific user', async () => {
+    const username = 'someone';
+    const oldPassword = 'correct';
+    const newPassword = 'changed';
+
+    const result = await service.changePassword(username, oldPassword, newPassword);
+    expect(result).toBeTruthy();
+    const user = await userRepository.findOneBy({ username });
+    expect(user.password).toBe('hashed_changed');
+  })
 });

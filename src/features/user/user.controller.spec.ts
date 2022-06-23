@@ -3,6 +3,7 @@ import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { UserExistedException } from './exceptions/user-existed.exception';
 import { UserNotExistedException } from './exceptions/user-not-existed.exception';
+import { WrongPasswordException } from './exceptions/wrong-password.exception';
 
 describe('UserController', () => {
   let controller: UserController;
@@ -16,6 +17,7 @@ describe('UserController', () => {
     const mockUserService = {
       create: jest.fn(dto => dto.username != 'someone' ? { ...dto, id: 2 } : null),
       findOne: jest.fn(username => username == 'someone' ? mockUser : null),
+      changePassword: jest.fn((_, oldPassword) => oldPassword == 'correct'),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -56,5 +58,19 @@ describe('UserController', () => {
     const req = { user: { username: 'not_existed' } };
 
     expect(controller.getUser(req as any)).rejects.toThrow(UserNotExistedException);
+  });
+
+  it('should change the password of the specific user', async () => {
+    const req = { user: { username: 'someone' } };
+    const dto = { oldPassword: 'correct', newPassword: 'changed' };
+
+    expect(controller.changePassword(req as any, dto)).resolves.not.toThrow();
+  });
+
+  it('should throw an error when changing password with a wrong password', async () => {
+    const req = { user: { username: 'someone' } };
+    const dto = { oldPassword: 'wrong', newPassword: 'changed' };
+
+    expect(controller.changePassword(req as any, dto)).rejects.toThrow(WrongPasswordException);
   });
 });

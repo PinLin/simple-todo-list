@@ -1,9 +1,11 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
+import { ChangeUserPasswordDto } from './dto/change-user-password.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserExistedException } from './exceptions/user-existed.exception';
 import { UserNotExistedException } from './exceptions/user-not-existed.exception';
+import { WrongPasswordException } from './exceptions/wrong-password.exception';
 import { UserService } from './user.service';
 
 @Controller('user')
@@ -30,5 +32,15 @@ export class UserController {
 
         const { id, password, ...otherUserData } = user;
         return otherUserData;
+    }
+
+    @Put('password')
+    @UseGuards(AuthGuard('jwt'))
+    @HttpCode(HttpStatus.NO_CONTENT)
+    async changePassword(@Req() req: Request, @Body() payload: ChangeUserPasswordDto) {
+        const { username } = req.user;
+        const { oldPassword, newPassword } = payload;
+        const result = await this.userService.changePassword(username, oldPassword, newPassword);
+        if (!result) throw new WrongPasswordException();
     }
 }

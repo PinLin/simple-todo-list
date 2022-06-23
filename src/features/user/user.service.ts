@@ -28,4 +28,15 @@ export class UserService {
     findOne(username: string) {
         return this.userRepository.findOneBy({ username });
     }
+
+    async changePassword(username: string, oldPassword: string, newPassword: string) {
+        const user = await this.userRepository.findOneBy({ username });
+        if (!user) return false;
+
+        if (!(await this.argon2.verify(user.password, oldPassword))) return false;
+
+        user.password = await this.argon2.hash(newPassword);
+        await this.userRepository.save(user);
+        return true;
+    }
 }

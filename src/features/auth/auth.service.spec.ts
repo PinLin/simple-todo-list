@@ -69,9 +69,9 @@ describe('AuthService', () => {
   });
 
   it('should generate a access token', async () => {
-    const username = 'someone';
+    const user = { username: 'someone' } as any;
 
-    const token = service.generateToken({ username });
+    const token = service.generateToken(user);
     expect(token).toBe('token');
   });
 });

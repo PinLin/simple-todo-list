@@ -27,9 +27,9 @@ describe('AuthController', () => {
   });
 
   it('should generate a access token', async () => {
-    const req = { user: { username: 'someone' } };
+    const req = { user: { username: 'someone' } } as any;
 
-    const result = controller.login(req as any);
+    const result = controller.login(req);
     expect(result['accessToken']).toBe('token');
   });
 });

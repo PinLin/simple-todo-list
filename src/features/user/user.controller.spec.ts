@@ -2,24 +2,17 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { UserExistedException } from './exceptions/user-existed.exception';
-import { UserNotExistedException } from './exceptions/user-not-existed.exception';
 import { WrongPasswordException } from './exceptions/wrong-password.exception';
 
 describe('UserController', () => {
   let controller: UserController;
 
-  beforeEach(async () => {
-    const mockUser = {
-      id: 1,
-      username: 'someone',
-      password: 'dontcare',
-    }
-    const mockUserService = {
-      create: jest.fn(dto => dto.username != 'someone' ? { ...dto, id: 2 } : null),
-      findOne: jest.fn(username => username == 'someone' ? mockUser : null),
-      changePassword: jest.fn((_, oldPassword) => oldPassword == 'correct'),
-    };
+  const mockUserService = {
+    create: jest.fn(dto => dto.username != 'someone' ? { ...dto, id: 2 } : null),
+    changePassword: jest.fn((_, oldPassword) => oldPassword == 'correct'),
+  };
 
+  beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UserController],
       providers: [
@@ -48,29 +41,23 @@ describe('UserController', () => {
   });
 
   it('should return a user object', async () => {
-    const req = { user: { username: 'someone' } };
+    const req = { user: { id: 1, username: 'someone' } } as any;
 
-    const user = await controller.getUser(req as any);
+    const user = await controller.getUser(req);
     expect(user.username).toBe(req.user.username);
   });
 
-  it('should throw an error when getting a non-existed user', async () => {
-    const req = { user: { username: 'not_existed' } };
-
-    expect(controller.getUser(req as any)).rejects.toThrow(UserNotExistedException);
-  });
-
   it('should change the password of the specific user', async () => {
-    const req = { user: { username: 'someone' } };
+    const req = { user: { id: 1, username: 'someone' } } as any;
     const dto = { oldPassword: 'correct', newPassword: 'changed' };
 
-    expect(controller.changePassword(req as any, dto)).resolves.not.toThrow();
+    expect(controller.changePassword(req, dto)).resolves.not.toThrow();
   });
 
   it('should throw an error when changing password with a wrong password', async () => {
-    const req = { user: { username: 'someone' } };
+    const req = { user: { id: 1, username: 'someone' } } as any;
     const dto = { oldPassword: 'wrong', newPassword: 'changed' };
 
-    expect(controller.changePassword(req as any, dto)).rejects.toThrow(WrongPasswordException);
+    expect(controller.changePassword(req, dto)).rejects.toThrow(WrongPasswordException);
   });
 });

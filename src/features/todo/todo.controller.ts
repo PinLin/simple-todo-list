@@ -1,7 +1,6 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
-import { UserService } from '../user/user.service';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { NoPermissionToEditTodoException } from './exceptions/no-permission-to-edit-todo.exception';
@@ -12,15 +11,12 @@ import { TodoService } from './todo.service';
 export class TodoController {
     constructor(
         private readonly todoService: TodoService,
-        private readonly userService: UserService,
     ) { }
 
     @Post()
     @UseGuards(AuthGuard('jwt'))
     async createTodo(@Body() payload: CreateTodoDto, @Req() req: Request) {
-        const { username } = req.user;
-        const user = await this.userService.findOne(username);
-        const todo = await this.todoService.create(payload, user.id);
+        const todo = await this.todoService.create(payload, req.user.id);
         delete todo.owner;
         return todo;
     }
@@ -28,9 +24,7 @@ export class TodoController {
     @Get()
     @UseGuards(AuthGuard('jwt'))
     async findAllTodosByOwner(@Req() req: Request) {
-        const { username } = req.user;
-        const user = await this.userService.findOne(username);
-        const todos = await this.todoService.findAllByOwner(user.id);
+        const todos = await this.todoService.findAllByOwner(req.user.id);
         return todos;
     }
 
@@ -42,9 +36,7 @@ export class TodoController {
             throw new TodoNotExistedException();
         }
 
-        const { username } = req.user;
-        const user = await this.userService.findOne(username);
-        if (todo?.owner.id !== user.id) {
+        if (todo?.owner.id !== req.user.id) {
             throw new NoPermissionToEditTodoException();
         }
 
@@ -62,9 +54,7 @@ export class TodoController {
             throw new TodoNotExistedException();
         }
 
-        const { username } = req.user;
-        const user = await this.userService.findOne(username);
-        if (todo?.owner.id !== user.id) {
+        if (todo?.owner.id !== req.user.id) {
             throw new NoPermissionToEditTodoException();
         }
 

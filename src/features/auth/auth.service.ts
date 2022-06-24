@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { User } from '../../entities/user.entity';
 import { Argon2Service } from '../../utils/argon2/argon2.service';
 import { UserService } from '../user/user.service';
 
@@ -19,7 +20,7 @@ export class AuthService {
         return null;
     }
 
-    generateToken(user: any) {
+    generateToken(user: User) {
         const { username } = user;
         return this.jwtService.sign({ username });
     }

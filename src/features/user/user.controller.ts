@@ -4,7 +4,6 @@ import { Request } from 'express';
 import { ChangeUserPasswordDto } from './dto/change-user-password.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserExistedException } from './exceptions/user-existed.exception';
-import { UserNotExistedException } from './exceptions/user-not-existed.exception';
 import { WrongPasswordException } from './exceptions/wrong-password.exception';
 import { UserService } from './user.service';
 
@@ -26,11 +25,7 @@ export class UserController {
     @Get()
     @UseGuards(AuthGuard('jwt'))
     async getUser(@Req() req: Request) {
-        const { username } = req.user;
-        const user = await this.userService.findOne(username);
-        if (!user) throw new UserNotExistedException();
-
-        const { id, password, ...otherUserData } = user;
+        const { id, password, ...otherUserData } = req.user;
         return otherUserData;
     }
 

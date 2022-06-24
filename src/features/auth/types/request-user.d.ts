@@ -1,5 +1,7 @@
+import { User } from '../../entities/user.entity';
+
 declare module 'express' {
     export interface Request {
-        user?: { username: string };
+        user?: User;
     }
 }

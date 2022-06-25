@@ -85,4 +85,11 @@ describe('UserService', () => {
     const user = await userRepository.findOneBy({ username });
     expect(user.password).toBe('hashed_changed');
   })
+
+  it('should delete the specific user', async () => {
+    const username = 'someone';
+
+    const result = await service.delete(username);
+    expect(result).toBeTruthy();
+  });
 });

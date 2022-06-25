@@ -10,6 +10,7 @@ describe('UserController', () => {
   const mockUserService = {
     create: jest.fn(dto => dto.username != 'someone' ? { ...dto, id: 2 } : null),
     changePassword: jest.fn((_, oldPassword) => oldPassword == 'correct'),
+    delete: jest.fn(_ => { }),
   };
 
   beforeEach(async () => {
@@ -59,5 +60,11 @@ describe('UserController', () => {
     const dto = { oldPassword: 'wrong', newPassword: 'changed' };
 
     expect(controller.changePassword(req, dto)).rejects.toThrow(WrongPasswordException);
+  });
+
+  it('should delete a specific user', async () => {
+    const req = { user: { id: 1, username: 'someone' } } as any;
+
+    expect(controller.deleteUser(req)).resolves.not.toThrow();
   });
 });

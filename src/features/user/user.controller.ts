@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { ChangeUserPasswordDto } from './dto/change-user-password.dto';
@@ -37,5 +37,13 @@ export class UserController {
         const { oldPassword, newPassword } = payload;
         const result = await this.userService.changePassword(username, oldPassword, newPassword);
         if (!result) throw new WrongPasswordException();
+    }
+
+    @Delete()
+    @UseGuards(AuthGuard('jwt'))
+    @HttpCode(HttpStatus.NO_CONTENT)
+    async deleteUser(@Req() req: Request) {
+        const { username } = req.user;
+        await this.userService.delete(username);
     }
 }

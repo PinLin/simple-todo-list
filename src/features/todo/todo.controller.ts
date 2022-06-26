@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
@@ -7,6 +8,7 @@ import { NoPermissionToEditTodoException } from './exceptions/no-permission-to-e
 import { TodoNotExistedException } from './exceptions/todo-not-existed.exception';
 import { TodoService } from './todo.service';
 
+@ApiTags('Todo')
 @Controller('todo')
 export class TodoController {
     constructor(

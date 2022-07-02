@@ -14,7 +14,6 @@ import { TodoModule } from './features/todo/todo.module';
       isGlobal: true,
     }),
     TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         type: 'mysql',

@@ -15,7 +15,6 @@ import { JwtStrategy } from './stratgies/jwt.strategy';
     PassportModule,
     Argon2Module,
     JwtModule.registerAsync({
-      imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         secret: config.get('JWT_SECRET'),
@@ -29,4 +28,4 @@ import { JwtStrategy } from './stratgies/jwt.strategy';
   ],
   controllers: [AuthController],
 })
-export class AuthModule {}
+export class AuthModule { }

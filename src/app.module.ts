@@ -3,10 +3,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { Argon2Module } from './utils/argon2/argon2.module';
-import { UserModule } from './features/user/user.module';
-import { AuthModule } from './features/auth/auth.module';
-import { TodoModule } from './features/todo/todo.module';
+import { Argon2Module } from './utility/argon2/argon2.module';
+import { UserModule } from './feature/user/user.module';
+import { AuthModule } from './feature/auth/auth.module';
+import { TodoModule } from './feature/todo/todo.module';
 
 @Module({
   imports: [

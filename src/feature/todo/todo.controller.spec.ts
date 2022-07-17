@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { NoPermissionToEditTodoException } from './exceptions/no-permission-to-edit-todo.exception';
-import { TodoNotExistedException } from './exceptions/todo-not-existed.exception';
+import { NoPermissionToEditTodoException } from './exception/no-permission-to-edit-todo.exception';
+import { TodoNotExistedException } from './exception/todo-not-existed.exception';
 import { TodoController } from './todo.controller';
 import { TodoService } from './todo.service';
 

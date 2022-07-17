@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule, getRepositoryToken } from '@nestjs/typeorm';
-import { User } from '../../entities/user.entity';
-import { Todo } from '../../entities/todo.entity';
+import { User } from '../../entity/user.entity';
+import { Todo } from '../../entity/todo.entity';
 import { TodoService } from './todo.service';
 import { Repository } from 'typeorm';
 

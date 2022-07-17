@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
-import { Argon2Service } from '../../utils/argon2/argon2.service';
+import { Argon2Service } from '../../utility/argon2/argon2.service';
 import { JwtService } from '@nestjs/jwt';
 
 describe('AuthService', () => {

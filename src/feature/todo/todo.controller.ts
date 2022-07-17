@@ -3,8 +3,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
-import { NoPermissionToEditTodoException } from './exceptions/no-permission-to-edit-todo.exception';
-import { TodoNotExistedException } from './exceptions/todo-not-existed.exception';
+import { NoPermissionToEditTodoException } from './exception/no-permission-to-edit-todo.exception';
+import { TodoNotExistedException } from './exception/todo-not-existed.exception';
 import { TodoService } from './todo.service';
 
 @Controller('todo')

@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
-import { UserExistedException } from './exceptions/user-existed.exception';
-import { WrongPasswordException } from './exceptions/wrong-password.exception';
+import { UserExistedException } from './exception/user-existed.exception';
+import { WrongPasswordException } from './exception/wrong-password.exception';
 
 describe('UserController', () => {
   let controller: UserController;

@@ -3,8 +3,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { ChangeUserPasswordDto } from './dto/change-user-password.dto';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UserExistedException } from './exceptions/user-existed.exception';
-import { WrongPasswordException } from './exceptions/wrong-password.exception';
+import { UserExistedException } from './exception/user-existed.exception';
+import { WrongPasswordException } from './exception/wrong-password.exception';
 import { UserService } from './user.service';
 
 @Controller('user')
